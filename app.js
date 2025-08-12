@@ -1,3 +1,4 @@
+console.log('DPSA app.js v11 loaded');
 console.log("DPSA app.js loaded");
 
 /* =========================
@@ -395,10 +396,11 @@ function openStudent(data){
   f.reset();
   if(data){ f.id.value=data.id; f.name.value=data.name; f.phone.value=data.phone||''; f.email.value=data.email||''; }
   dlg.showModal();
-  dlg.addEventListener('close', saveStudent, {once:true});
+  const f = document.getElementById('studentForm');
+  f.onsubmit = (e)=>{ e.preventDefault(); saveStudent(); dlg.close('submit'); };
 }
 function saveStudent(){
-  const f = $('#studentForm'); if(f.returnValue==='cancel') return;
+  const f = $('#studentForm');
   const item = { id:f.id.value||uid(), name:f.name.value.trim(), phone:f.phone.value.trim(), email:f.email.value.trim() };
   if(!item.name) return;
   const i = db.students.findIndex(x=>x.id===item.id);
@@ -411,10 +413,11 @@ function openTeacher(data){
   const dlg=$('#teacherModal'), f=$('#teacherForm'); f.reset();
   if(data){ f.id.value=data.id; f.name.value=data.name; f.expertise.value=data.expertise||''; f.share.value=(data.share ?? ''); }
   dlg.showModal();
-  dlg.addEventListener('close', saveTeacher, {once:true});
+  const f = document.getElementById('teacherForm');
+  f.onsubmit = (e)=>{ e.preventDefault(); saveTeacher(); dlg.close('submit'); };
 }
 function saveTeacher(){
-  const f=$('#teacherForm'); if(f.returnValue==='cancel') return;
+  const f=$('#teacherForm');
   const item={ id:f.id.value||uid(), name:f.name.value.trim(), expertise:f.expertise.value.trim(), share: f.share.value===''? null : Number(f.share.value) };
   if(!item.name) return;
   const i=db.teachers.findIndex(x=>x.id===item.id);
@@ -427,10 +430,11 @@ function openCourse(data){
   const dlg=$('#courseModal'), f=$('#courseForm'); f.reset();
   if(data){ f.id.value=data.id; f.title.value=data.title; f.price.value=data.price; }
   dlg.showModal();
-  dlg.addEventListener('close', saveCourse, {once:true});
+  const f = document.getElementById('courseForm');
+  f.onsubmit = (e)=>{ e.preventDefault(); saveCourse(); dlg.close('submit'); };
 }
 function saveCourse(){
-  const f=$('#courseForm'); if(f.returnValue==='cancel') return;
+  const f=$('#courseForm');
   const item={ id:f.id.value||uid(), title:f.title.value.trim(), price:Number(f.price.value||0) };
   if(!item.title) return;
   const i=db.courses.findIndex(x=>x.id===item.id);
@@ -451,10 +455,11 @@ function openEnroll(data){
   const dlg=$('#enrollModal'), f=$('#enrollForm'); f.reset(); renderEnrollmentOptions();
   if(data){ f.id.value=data.id; f.studentId.value=data.studentId; f.teacherId.value=data.teacherId; f.courseId.value=data.courseId; f.startDate.value=data.startDate||''; f.schedule.value=data.schedule||''; f.shareOverride.value=(data.shareOverride ?? ''); }
   dlg.showModal();
-  dlg.addEventListener('close', saveEnroll, {once:true});
+  const f = document.getElementById('enrollForm');
+  f.onsubmit = (e)=>{ e.preventDefault(); saveEnroll(); dlg.close('submit'); };
 }
 function saveEnroll(){
-  const f=$('#enrollForm'); if(f.returnValue==='cancel') return;
+  const f=$('#enrollForm');
   const item={ id:f.id.value||uid(), studentId:f.studentId.value, teacherId:f.teacherId.value, courseId:f.courseId.value, startDate:f.startDate.value, schedule:f.schedule.value.trim(), shareOverride: f.shareOverride.value===''? null : Number(f.shareOverride.value) };
   const i=db.enrollments.findIndex(x=>x.id===item.id);
   if(i>-1) db.enrollments[i]=item; else db.enrollments.push(item);
@@ -466,10 +471,11 @@ function openPayment(data){
   const dlg=$('#paymentModal'), f=$('#paymentForm'); f.reset(); renderEnrollmentOptions();
   if(data){ f.id.value=data.id; f.studentId.value=data.studentId; f.courseId.value=data.courseId; f.amount.value=data.amount; f.date.value=data.date; f.method.value=data.method; }
   dlg.showModal();
-  dlg.addEventListener('close', savePayment, {once:true});
+  const f = document.getElementById('paymentForm');
+  f.onsubmit = (e)=>{ e.preventDefault(); savePayment(); dlg.close('submit'); };
 }
 function savePayment(){
-  const f=$('#paymentForm'); if(f.returnValue==='cancel') return;
+  const f=$('#paymentForm');
   const item={ id:f.id.value||uid(), studentId:f.studentId.value, courseId:f.courseId.value, amount:Number(f.amount.value||0), date:f.date.value, method:f.method.value };
   const i=db.payments.findIndex(x=>x.id===item.id);
   if(i>-1) db.payments[i]=item; else db.payments.push(item);
