@@ -3,129 +3,189 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Erfa — Modern ve Hızlı Web Sitesi</title>
-  <meta name="description" content="Hızlı, modern ve mobil uyumlu bir başlangıç website şablonu." />
-  <meta property="og:title" content="Erfa — Modern Web Sitesi" />
-  <meta property="og:description" content="Mobil uyumlu, SEO dostu başlangıç şablonu." />
-  <meta property="og:type" content="website" />
-  <link rel="icon" href="assets/favicon.png" />
-  <link rel="preload" href="assets/hero.jpg" as="image" />
+  <title>Dilara Pak Sanat Akademi — Yönetim</title>
   <link rel="stylesheet" href="styles.css" />
+  <meta name="description" content="Öğrenci kayıt, ders/branş, öğretmen ve ödemeler yönetimi" />
 </head>
 <body>
-  <header class="site-header">
-    <div class="container header-inner">
-      <a href="#home" class="logo">ERFA<span>.</span></a>
-      <nav id="nav" class="nav">
-        <a href="#features">Özellikler</a>
-        <a href="#about">Hakkımızda</a>
-        <a href="#contact" class="btn btn-sm">İletişim</a>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <h1 class="brand">DPSA<span>Yönetim</span></h1>
+      <nav class="tabs" id="tabs">
+        <a href="#dashboard" class="tab">Panel</a>
+        <a href="#students" class="tab">Öğrenciler</a>
+        <a href="#teachers" class="tab">Öğretmenler</a>
+        <a href="#courses" class="tab">Dersler/Branşlar</a>
+        <a href="#enrollments" class="tab">Kayıtlar</a>
+        <a href="#payments" class="tab">Ödemeler</a>
+        <a href="#payouts" class="tab">Öğretmen Hakediş</a>
+        <a href="#settings" class="tab">Ayarlar</a>
       </nav>
-      <button id="menuBtn" class="menu-btn" aria-label="Menüyü aç/kapat">
-        <span></span><span></span><span></span>
-      </button>
     </div>
   </header>
 
-  <main id="home">
-    <section class="hero">
-      <div class="container hero-grid">
-        <div class="hero-copy">
-          <h1>İlk Web Siteniz — <span>Domain almadan</span> yayında!</h1>
-          <p>Bu şablonla dakikalar içinde responsive, hızlı ve SEO dostu bir site kurabilirsiniz. İçerikleri bize göre düzenleyelim.</p>
-          <div class="hero-cta">
-            <a href="#features" class="btn">Neler Var?</a>
-            <a href="#contact" class="btn btn-outline">Teklif Al</a>
-          </div>
-          <ul class="badges">
-            <li>Mobil Uyumlu</li>
-            <li>Hızlı Yüklenir</li>
-            <li>SEO Etiketleri Hazır</li>
-          </ul>
-        </div>
-        <div class="hero-media">
-          <img src="assets/hero.jpg" alt="Modern web sitesi ön izlemesi" />
-        </div>
-      </div>
+  <main class="container">
+    <section id="dashboard" class="page hidden">
+      <h2>Yönetim Paneli</h2>
+      <div id="stats" class="stats"></div>
+      <p class="muted">Not: Şu an veriler tarayıcıda (localStorage) saklanıyor. Sonraki adım Firebase/Firestore.</p>
     </section>
 
-    <section id="features" class="section">
-      <div class="container">
-        <h2 class="section-title">Özellikler</h2>
-        <div class="features-grid">
-          <article class="card">
-            <h3>Hızlı Yayın</h3>
-            <p>GitHub Pages, Netlify veya Vercel ile anında yayına alın.</p>
-          </article>
-          <article class="card">
-            <h3>Kolay Düzenleme</h3>
-            <p>Basit HTML/CSS yapısı; metin ve görselleri rahatça değiştirin.</p>
-          </article>
-          <article class="card">
-            <h3>İletişim Formu</h3>
-            <p>Formspree gibi servislerle backend olmadan mesaj alın.</p>
-          </article>
-          <article class="card">
-            <h3>Gelişmeye Açık</h3>
-            <p>İleride özel domain, blog, çoklu dil veya e-ticaret eklenebilir.</p>
-          </article>
-        </div>
+    <section id="students" class="page hidden">
+      <div class="page-head">
+        <h2>Öğrenciler</h2>
+        <button class="btn" data-open="studentModal">+ Yeni Öğrenci</button>
       </div>
+      <div id="studentTable"></div>
     </section>
 
-    <section id="about" class="section alt">
-      <div class="container about-grid">
-        <div>
-          <h2 class="section-title">Hakkımızda</h2>
-          <p>Buraya firma hikayeniz, misyonunuz ve hizmetlerinizle ilgili kısa ama etkili bir metin gelecek. İstediğiniz içerik ve görsellerle kişiselleştirelim.</p>
-          <ul class="checklist">
-            <li>Profesyonel görünüm</li>
-            <li>Güçlü performans</li>
-            <li>Temiz kod</li>
-          </ul>
-        </div>
-        <div class="about-stats card">
-          <div class="stat"><span>2000m²</span><small>Tesis</small></div>
-          <div class="stat"><span>2008</span><small>Kuruluş</small></div>
-          <div class="stat"><span>7/24</span><small>Destek</small></div>
-        </div>
+    <section id="teachers" class="page hidden">
+      <div class="page-head">
+        <h2>Öğretmenler</h2>
+        <button class="btn" data-open="teacherModal">+ Yeni Öğretmen</button>
       </div>
+      <div id="teacherTable"></div>
     </section>
 
-    <section id="contact" class="section">
-      <div class="container">
-        <h2 class="section-title">İletişim</h2>
-        <form id="contactForm" class="form" method="POST" action="https://formspree.io/f/YOUR_FORM_ID">
-          <div class="form-row">
-            <label>Ad Soyad
-              <input type="text" name="name" required />
-            </label>
-            <label>E-posta
-              <input type="email" name="email" required />
-            </label>
-          </div>
-          <label>Konu
-            <input type="text" name="subject" />
-          </label>
-          <label>Mesaj
-            <textarea name="message" rows="5" required></textarea>
-          </label>
-          <div class="form-actions">
-            <button class="btn" type="submit">Gönder</button>
-            <small class="form-note">Formspree ID'nizi ekledikten sonra form çalışacaktır.</small>
-          </div>
-        </form>
+    <section id="courses" class="page hidden">
+      <div class="page-head">
+        <h2>Dersler / Branşlar</h2>
+        <button class="btn" data-open="courseModal">+ Yeni Ders</button>
       </div>
+      <div id="courseTable"></div>
+    </section>
+
+    <section id="enrollments" class="page hidden">
+      <div class="page-head">
+        <h2>Kayıtlar (Öğrenci ↔ Ders ↔ Öğretmen)</h2>
+        <button class="btn" data-open="enrollModal">+ Yeni Kayıt</button>
+      </div>
+      <div id="enrollmentTable"></div>
+    </section>
+
+    <section id="payments" class="page hidden">
+      <div class="page-head">
+        <h2>Öğrenci Ödemeleri</h2>
+        <button class="btn" data-open="paymentModal">+ Ödeme Ekle</button>
+      </div>
+      <div id="paymentTable"></div>
+    </section>
+
+    <section id="payouts" class="page hidden">
+      <div class="page-head">
+        <h2>Öğretmen Hakedişleri</h2>
+        <button class="btn" id="recalcPayouts">↻ Yeniden Hesapla</button>
+      </div>
+      <div id="payoutTable"></div>
+    </section>
+
+    <section id="settings" class="page hidden">
+      <h2>Ayarlar</h2>
+      <form id="settingsForm" class="form">
+        <label>Varsayılan Öğretmen Payı (%)
+          <input type="number" name="defaultShare" min="0" max="100" step="1" />
+        </label>
+        <label>Akademi Adı
+          <input type="text" name="academyName" placeholder="Dilara Pak Sanat Akademi" />
+        </label>
+        <button class="btn" type="submit">Kaydet</button>
+      </form>
     </section>
   </main>
 
-  <footer class="site-footer">
-    <div class="container footer-inner">
-      <p>© <span id="year"></span> Erfa. Tüm hakları saklıdır.</p>
-      <a href="#home" class="backtop" aria-label="Başa dön">↑</a>
-    </div>
+  <!-- Modals -->
+  <dialog id="studentModal" class="modal">
+    <form method="dialog" id="studentForm" class="form">
+      <h3>Öğrenci</h3>
+      <input type="hidden" name="id" />
+      <label>Ad Soyad <input name="name" required /></label>
+      <label>Telefon <input name="phone" /></label>
+      <label>E-posta <input type="email" name="email" /></label>
+      <menu>
+        <button class="btn-outline" value="cancel">Vazgeç</button>
+        <button class="btn" value="submit">Kaydet</button>
+      </menu>
+    </form>
+  </dialog>
+
+  <dialog id="teacherModal" class="modal">
+    <form method="dialog" id="teacherForm" class="form">
+      <h3>Öğretmen</h3>
+      <input type="hidden" name="id" />
+      <label>Ad Soyad <input name="name" required /></label>
+      <label>Uzmanlık/Branş <input name="expertise" /></label>
+      <label>Pay Oranı (%) <input type="number" name="share" min="0" max="100" step="1" placeholder="Boşsa varsayılan kullanılır"/></label>
+      <menu>
+        <button class="btn-outline" value="cancel">Vazgeç</button>
+        <button class="btn" value="submit">Kaydet</button>
+      </menu>
+    </form>
+  </dialog>
+
+  <dialog id="courseModal" class="modal">
+    <form method="dialog" id="courseForm" class="form">
+      <h3>Ders/Branş</h3>
+      <input type="hidden" name="id" />
+      <label>Başlık <input name="title" required /></label>
+      <label>Ücret (Aylık) <input type="number" name="price" min="0" step="0.01" required /></label>
+      <menu>
+        <button class="btn-outline" value="cancel">Vazgeç</button>
+        <button class="btn" value="submit">Kaydet</button>
+      </menu>
+    </form>
+  </dialog>
+
+  <dialog id="enrollModal" class="modal">
+    <form method="dialog" id="enrollForm" class="form">
+      <h3>Yeni Kayıt</h3>
+      <input type="hidden" name="id" />
+      <label>Öğrenci
+        <select name="studentId" required></select>
+      </label>
+      <label>Ders
+        <select name="courseId" required></select>
+      </label>
+      <label>Öğretmen
+        <select name="teacherId" required></select>
+      </label>
+      <label>Gün/Saat <input name="schedule" placeholder="Örn: Salı 17:00"/></label>
+      <menu>
+        <button class="btn-outline" value="cancel">Vazgeç</button>
+        <button class="btn" value="submit">Kaydet</button>
+      </menu>
+    </form>
+  </dialog>
+
+  <dialog id="paymentModal" class="modal">
+    <form method="dialog" id="paymentForm" class="form">
+      <h3>Ödeme</h3>
+      <input type="hidden" name="id" />
+      <label>Öğrenci
+        <select name="studentId" required></select>
+      </label>
+      <label>Ders
+        <select name="courseId" required></select>
+      </label>
+      <label>Tutar <input type="number" name="amount" min="0" step="0.01" required/></label>
+      <label>Tarih <input type="date" name="date" required/></label>
+      <label>Tip
+        <select name="method">
+          <option>Nakit</option>
+          <option>Kart</option>
+          <option>Havale</option>
+        </select>
+      </label>
+      <menu>
+        <button class="btn-outline" value="cancel">Vazgeç</button>
+        <button class="btn" value="submit">Kaydet</button>
+      </menu>
+    </form>
+  </dialog>
+
+  <footer class="footer container">
+    <small>© <span id="year"></span> DPSA Yönetim. Bu demo yerel veri kullanır; canlıda Firestore’a geçilecek.</small>
   </footer>
 
-  <script src="main.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
