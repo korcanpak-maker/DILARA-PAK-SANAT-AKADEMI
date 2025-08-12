@@ -1,3 +1,4 @@
+console.log("DPSA app.js loaded");
 
 /* =========================
    Data layer (localStorage or Firestore)
