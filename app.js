@@ -238,7 +238,7 @@ function renderPayments(){
 }
 function openPayment(data){
   const dlg=$('#paymentModal'), f=$('#paymentForm'); f.reset(); renderEnrollmentOptions();
-  if(data){ f.id.value=data.id; f.studentId.value=data.studentId; f.courseId.value=data.courseId; f.amount.value=p.amount; f.date.value=data.date; f.method.value=data.method; }
+  if(data){ f.id.value=data.id; f.studentId.value=data.studentId; f.courseId.value=data.courseId; f.amount.value=data.amount; f.date.value=data.date; f.method.value=data.method; }
   dlg.showModal();
   dlg.addEventListener('close', savePayment, {once:true});
 }
