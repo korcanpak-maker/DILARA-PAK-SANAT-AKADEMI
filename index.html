@@ -3,14 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dilara Pak Sanat Akademi — Yönetim</title>
+  <title>Dilara Pak Sanat Akademi — Yönetim PRO</title>
+  <meta name="description" content="Öğrenci kayıt, ders/branş, öğretmen, ödemeler ve hakediş yönetimi" />
   <link rel="stylesheet" href="styles.css" />
-  <meta name="description" content="Öğrenci kayıt, ders/branş, öğretmen ve ödemeler yönetimi" />
+  <!-- Firebase (opsiyonel) -->
+  <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 </head>
 <body>
   <header class="topbar">
     <div class="container topbar-inner">
-      <h1 class="brand">DPSA<span>Yönetim</span></h1>
+      <h1 class="brand">DPSA<span>Yönetim PRO</span></h1>
       <nav class="tabs" id="tabs">
         <a href="#dashboard" class="tab">Panel</a>
         <a href="#students" class="tab">Öğrenciler</a>
@@ -21,6 +25,7 @@
         <a href="#payouts" class="tab">Öğretmen Hakediş</a>
         <a href="#settings" class="tab">Ayarlar</a>
       </nav>
+      <div id="authArea" class="auth"></div>
     </div>
   </header>
 
@@ -28,13 +33,20 @@
     <section id="dashboard" class="page hidden">
       <h2>Yönetim Paneli</h2>
       <div id="stats" class="stats"></div>
-      <p class="muted">Not: Şu an veriler tarayıcıda (localStorage) saklanıyor. Sonraki adım Firebase/Firestore.</p>
+      <div class="card">
+        <h3>Bekleyen ve Ödenen</h3>
+        <div id="financeSummary"></div>
+      </div>
+      <p class="muted">Not: Ayarlar &gt; “Firebase kullan” açılırsa veriler Firestore’da tutulur; aksi halde tarayıcıda (localStorage).</p>
     </section>
 
     <section id="students" class="page hidden">
       <div class="page-head">
         <h2>Öğrenciler</h2>
-        <button class="btn" data-open="studentModal">+ Yeni Öğrenci</button>
+        <div class="tools">
+          <input id="studentSearch" class="search" placeholder="Ara: ad, e-posta, telefon" />
+          <button class="btn" data-open="studentModal">+ Yeni Öğrenci</button>
+        </div>
       </div>
       <div id="studentTable"></div>
     </section>
@@ -42,7 +54,10 @@
     <section id="teachers" class="page hidden">
       <div class="page-head">
         <h2>Öğretmenler</h2>
-        <button class="btn" data-open="teacherModal">+ Yeni Öğretmen</button>
+        <div class="tools">
+          <input id="teacherSearch" class="search" placeholder="Ara: ad, branş" />
+          <button class="btn" data-open="teacherModal">+ Yeni Öğretmen</button>
+        </div>
       </div>
       <div id="teacherTable"></div>
     </section>
@@ -50,7 +65,10 @@
     <section id="courses" class="page hidden">
       <div class="page-head">
         <h2>Dersler / Branşlar</h2>
-        <button class="btn" data-open="courseModal">+ Yeni Ders</button>
+        <div class="tools">
+          <input id="courseSearch" class="search" placeholder="Ara: ders adı" />
+          <button class="btn" data-open="courseModal">+ Yeni Ders</button>
+        </div>
       </div>
       <div id="courseTable"></div>
     </section>
@@ -58,7 +76,13 @@
     <section id="enrollments" class="page hidden">
       <div class="page-head">
         <h2>Kayıtlar (Öğrenci ↔ Ders ↔ Öğretmen)</h2>
-        <button class="btn" data-open="enrollModal">+ Yeni Kayıt</button>
+        <div class="tools">
+          <input id="enrollSearch" class="search" placeholder="Ara: öğrenci, ders, öğretmen" />
+          <label class="inline">Tarih:
+            <input type="month" id="enrollMonth" />
+          </label>
+          <button class="btn" data-open="enrollModal">+ Yeni Kayıt</button>
+        </div>
       </div>
       <div id="enrollmentTable"></div>
     </section>
@@ -66,7 +90,13 @@
     <section id="payments" class="page hidden">
       <div class="page-head">
         <h2>Öğrenci Ödemeleri</h2>
-        <button class="btn" data-open="paymentModal">+ Ödeme Ekle</button>
+        <div class="tools">
+          <input id="paymentSearch" class="search" placeholder="Ara: öğrenci, ders" />
+          <label class="inline">Tarih aralığı:
+            <input type="date" id="payFrom" />–<input type="date" id="payTo" />
+          </label>
+          <button class="btn" data-open="paymentModal">+ Ödeme Ekle</button>
+        </div>
       </div>
       <div id="paymentTable"></div>
     </section>
@@ -74,7 +104,12 @@
     <section id="payouts" class="page hidden">
       <div class="page-head">
         <h2>Öğretmen Hakedişleri</h2>
-        <button class="btn" id="recalcPayouts">↻ Yeniden Hesapla</button>
+        <div class="tools">
+          <label class="inline">Ay:
+            <input type="month" id="payoutMonth" />
+          </label>
+          <button class="btn" id="recalcPayouts">↻ Yeniden Hesapla</button>
+        </div>
       </div>
       <div id="payoutTable"></div>
     </section>
@@ -82,14 +117,39 @@
     <section id="settings" class="page hidden">
       <h2>Ayarlar</h2>
       <form id="settingsForm" class="form">
-        <label>Varsayılan Öğretmen Payı (%)
-          <input type="number" name="defaultShare" min="0" max="100" step="1" />
-        </label>
-        <label>Akademi Adı
-          <input type="text" name="academyName" placeholder="Dilara Pak Sanat Akademi" />
-        </label>
+        <div class="grid2">
+          <label>Akademi Adı
+            <input type="text" name="academyName" placeholder="Dilara Pak Sanat Akademi" />
+          </label>
+          <label>Varsayılan Öğretmen Payı (%)
+            <input type="number" name="defaultShare" min="0" max="100" step="1" />
+          </label>
+        </div>
+        <div class="grid2">
+          <label>Firebase kullan
+            <select name="useFirebase">
+              <option value="no">Hayır (localStorage)</option>
+              <option value="yes">Evet (Firestore)</option>
+            </select>
+          </label>
+          <div></div>
+        </div>
+        <details class="card">
+          <summary>Firebase yapılandırması</summary>
+          <div class="grid2">
+            <label>apiKey <input name="apiKey" /></label>
+            <label>authDomain <input name="authDomain" /></label>
+            <label>projectId <input name="projectId" /></label>
+            <label>appId <input name="appId" /></label>
+          </div>
+          <p class="muted">Bu alanlar doldurulursa ve “Firebase kullan: Evet” seçilirse veriler Firestore’a yazılır. Giriş: Google ile.</p>
+        </details>
         <button class="btn" type="submit">Kaydet</button>
       </form>
+      <div class="export-area">
+        <button class="btn-outline" id="exportJson">Verileri İndir (JSON)</button>
+        <input type="file" id="importJson" accept="application/json" />
+      </div>
     </section>
   </main>
 
@@ -102,7 +162,7 @@
       <label>Telefon <input name="phone" /></label>
       <label>E-posta <input type="email" name="email" /></label>
       <menu>
-        <button class="btn-outline" value="cancel" formnovalidate>Vazgeç</button>
+        <button class="btn-outline" type="button" data-close>Vazgeç</button>
         <button class="btn" value="submit">Kaydet</button>
       </menu>
     </form>
@@ -114,9 +174,9 @@
       <input type="hidden" name="id" />
       <label>Ad Soyad <input name="name" required /></label>
       <label>Uzmanlık/Branş <input name="expertise" /></label>
-      <label>Pay Oranı (%) <input type="number" name="share" min="0" max="100" step="1" placeholder="Boşsa varsayılan kullanılır"/></label>
+      <label>Pay Oranı (%) <input type="number" name="share" min="0" max="100" step="1" placeholder="Boşsa varsayılan"/></label>
       <menu>
-        <button class="btn-outline" value="cancel" formnovalidate>Vazgeç</button>
+        <button class="btn-outline" type="button" data-close>Vazgeç</button>
         <button class="btn" value="submit">Kaydet</button>
       </menu>
     </form>
@@ -129,7 +189,7 @@
       <label>Başlık <input name="title" required /></label>
       <label>Ücret (Aylık) <input type="number" name="price" min="0" step="0.01" required /></label>
       <menu>
-        <button class="btn-outline" value="cancel" formnovalidate>Vazgeç</button>
+        <button class="btn-outline" type="button" data-close>Vazgeç</button>
         <button class="btn" value="submit">Kaydet</button>
       </menu>
     </form>
@@ -148,9 +208,13 @@
       <label>Öğretmen
         <select name="teacherId" required></select>
       </label>
+      <div class="grid2">
+        <label>Başlangıç <input type="date" name="startDate" required /></label>
+        <label>Pay Oranı (bu kayıt için, % - opsiyonel) <input type="number" name="shareOverride" min="0" max="100" step="1" /></label>
+      </div>
       <label>Gün/Saat <input name="schedule" placeholder="Örn: Salı 17:00"/></label>
       <menu>
-        <button class="btn-outline" value="cancel" formnovalidate>Vazgeç</button>
+        <button class="btn-outline" type="button" data-close>Vazgeç</button>
         <button class="btn" value="submit">Kaydet</button>
       </menu>
     </form>
@@ -166,8 +230,10 @@
       <label>Ders
         <select name="courseId" required></select>
       </label>
-      <label>Tutar <input type="number" name="amount" min="0" step="0.01" required/></label>
-      <label>Tarih <input type="date" name="date" required/></label>
+      <div class="grid2">
+        <label>Tutar <input type="number" name="amount" min="0" step="0.01" required/></label>
+        <label>Tarih <input type="date" name="date" required/></label>
+      </div>
       <label>Tip
         <select name="method">
           <option>Nakit</option>
@@ -176,14 +242,14 @@
         </select>
       </label>
       <menu>
-        <button class="btn-outline" value="cancel" formnovalidate>Vazgeç</button>
+        <button class="btn-outline" type="button" data-close>Vazgeç</button>
         <button class="btn" value="submit">Kaydet</button>
       </menu>
     </form>
   </dialog>
 
   <footer class="footer container">
-    <small>© <span id="year"></span> DPSA Yönetim. Bu demo yerel veri kullanır; canlıda Firestore’a geçilecek.</small>
+    <small>© <span id="year"></span> DPSA Yönetim PRO.</small>
   </footer>
 
   <script src="app.js"></script>
